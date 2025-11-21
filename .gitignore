@@ -1,0 +1,18 @@
+## Build results
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+
+## Rider
+.idea/
+
+## VS Code
+.vscode/
+
