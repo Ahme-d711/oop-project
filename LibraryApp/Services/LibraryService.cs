@@ -9,20 +9,34 @@ public class LibraryService
 {
     private Library _library;
 
+    // Static member
+    public static int TotalLibrariesCreated { get; private set; } = 0;
+
     public LibraryService()
     {
         _library = new Library();
+        TotalLibrariesCreated++; // Increment static counter
     }
 
     public Library GetLibrary() => _library;
 
-    // Add book with validation
+    // Add book with validation (Method Overloading - version 1)
     public string AddBook(string title, string author)
     {
         if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(author))
             throw new ArgumentException("Title and author are required.");
 
         var book = new Book(title, author);
+        _library.AddBook(book);
+        return book.Id;
+    }
+
+    // Method Overloading - version 2 (with Book object)
+    public string AddBook(Book book)
+    {
+        if (book == null)
+            throw new ArgumentNullException(nameof(book));
+
         _library.AddBook(book);
         return book.Id;
     }

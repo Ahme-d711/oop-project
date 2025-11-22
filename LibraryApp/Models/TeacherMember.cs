@@ -14,6 +14,7 @@ public class TeacherMember : Person
         EmployeeId = employeeId;
     }
 
-    public override string ToString() => $"Teacher: {base.ToString()} (ID: {EmployeeId})";
+    // Override virtual method from base class
+    public override string ToString() => $"Teacher: {base.ToString()} (ID: {this.EmployeeId})";
 }
 

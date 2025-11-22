@@ -16,6 +16,7 @@ public abstract class Person
         Email = email;
     }
 
+    // Virtual method for polymorphism (overriding object.ToString())
     public override string ToString() => $"{Name} ({Email})";
 }
 

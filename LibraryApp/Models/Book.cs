@@ -11,12 +11,28 @@ public class Book
     public bool IsAvailable { get; set; } = true;
     public string? BorrowedByMemberId { get; set; } = null;
 
-    public Book(string title, string author)
+    // Default constructor
+    public Book()
     {
         Id = Guid.NewGuid().ToString();
-        Title = title;
-        Author = author;
+        Title = string.Empty;
+        Author = string.Empty;
         IsAvailable = true;
+    }
+
+    // Parameterized constructor (Method Overloading)
+    public Book(string title, string author)
+    {
+        this.Id = Guid.NewGuid().ToString(); // Using 'this' keyword
+        this.Title = title;
+        this.Author = author;
+        this.IsAvailable = true;
+    }
+
+    // Destructor
+    ~Book()
+    {
+        // Cleanup code if needed
     }
 
     public override string ToString() => $"{Title} — {Author} (Id: {Id}) {(IsAvailable ? "[Available]" : "[Borrowed]")}";
