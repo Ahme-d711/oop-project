@@ -30,24 +30,47 @@ import {
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
 
-export const description = "An interactive area chart"
+export const description = "Library usage analytics"
+
+interface LibraryStats {
+  totalBooks: number;
+  availableBooks: number;
+  borrowedBooks: number;
+  totalMembers: number;
+  studentMembers: number;
+  teacherMembers: number;
+}
+
+// Generate sample library usage data over time
+const generateLibraryData = (stats: LibraryStats) => {
+  const data = []
+  const today = new Date()
+  
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date(today)
+    date.setDate(date.getDate() - i)
+    
+    // Simulate some variation in borrowing patterns
+    const baseAvailable = stats.availableBooks
+    const baseBorrowed = stats.borrowedBooks
+    const variation = Math.random() * 0.3 - 0.15 // ±15% variation
+    
+    data.push({
+      date: date.toISOString().split('T')[0],
+      available: Math.max(0, Math.round(baseAvailable + (baseAvailable * variation))),
+      borrowed: Math.max(0, Math.round(baseBorrowed + (baseBorrowed * variation * -1))),
+    })
+  }
+  
+  return data
+}
 
 const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
-  { date: "2024-04-03", desktop: 167, mobile: 120 },
-  { date: "2024-04-04", desktop: 242, mobile: 260 },
-  { date: "2024-04-05", desktop: 373, mobile: 290 },
-  { date: "2024-04-06", desktop: 301, mobile: 340 },
-  { date: "2024-04-07", desktop: 245, mobile: 180 },
-  { date: "2024-04-08", desktop: 409, mobile: 320 },
-  { date: "2024-04-09", desktop: 59, mobile: 110 },
-  { date: "2024-04-10", desktop: 261, mobile: 190 },
-  { date: "2024-04-11", desktop: 327, mobile: 350 },
-  { date: "2024-04-12", desktop: 292, mobile: 210 },
-  { date: "2024-04-13", desktop: 342, mobile: 380 },
-  { date: "2024-04-14", desktop: 137, mobile: 220 },
-  { date: "2024-04-15", desktop: 120, mobile: 170 },
+  { date: "2024-11-01", available: 15, borrowed: 8 },
+  { date: "2024-11-02", available: 14, borrowed: 9 },
+  { date: "2024-11-03", available: 16, borrowed: 7 },
+  { date: "2024-11-04", available: 13, borrowed: 10 },
+  { date: "2024-11-05", available: 12, borrowed: 11 },
   { date: "2024-04-16", desktop: 138, mobile: 190 },
   { date: "2024-04-17", desktop: 446, mobile: 360 },
   { date: "2024-04-18", desktop: 364, mobile: 410 },
@@ -127,22 +150,30 @@ const chartData = [
 ]
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  books: {
+    label: "Books",
   },
-  desktop: {
-    label: "Desktop",
-    color: "var(--primary)",
+  available: {
+    label: "Available",
+    color: "hsl(var(--chart-1))",
   },
-  mobile: {
-    label: "Mobile",
-    color: "var(--primary)",
+  borrowed: {
+    label: "Borrowed",
+    color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig
 
-export function ChartAreaInteractive() {
+export function ChartAreaInteractive({ libraryStats }: { libraryStats?: LibraryStats }) {
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("90d")
+  
+  // Use provided library stats or generate sample data
+  const actualChartData = React.useMemo(() => {
+    if (libraryStats) {
+      return generateLibraryData(libraryStats)
+    }
+    return chartData
+  }, [libraryStats])
 
   React.useEffect(() => {
     if (isMobile) {
@@ -150,7 +181,7 @@ export function ChartAreaInteractive() {
     }
   }, [isMobile])
 
-  const filteredData = chartData.filter((item) => {
+  const filteredData = actualChartData.filter((item) => {
     const date = new Date(item.date)
     const referenceDate = new Date("2024-06-30")
     let daysToSubtract = 90
@@ -167,12 +198,12 @@ export function ChartAreaInteractive() {
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>Total Visitors</CardTitle>
+        <CardTitle>Library Usage Analytics</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Total for the last 3 months
+            Book availability and borrowing trends over time
           </span>
-          <span className="@[540px]/card:hidden">Last 3 months</span>
+          <span className="@[540px]/card:hidden">Book trends</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -215,27 +246,27 @@ export function ChartAreaInteractive() {
         >
           <AreaChart data={filteredData}>
             <defs>
-              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="fillAvailable" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-desktop)"
+                  stopColor="var(--color-available)"
                   stopOpacity={1.0}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-desktop)"
+                  stopColor="var(--color-available)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="fillBorrowed" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-mobile)"
+                  stopColor="var(--color-borrowed)"
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-mobile)"
+                  stopColor="var(--color-borrowed)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
@@ -270,17 +301,17 @@ export function ChartAreaInteractive() {
               }
             />
             <Area
-              dataKey="mobile"
+              dataKey="borrowed"
               type="natural"
-              fill="url(#fillMobile)"
-              stroke="var(--color-mobile)"
+              fill="url(#fillBorrowed)"
+              stroke="var(--color-borrowed)"
               stackId="a"
             />
             <Area
-              dataKey="desktop"
+              dataKey="available"
               type="natural"
-              fill="url(#fillDesktop)"
-              stroke="var(--color-desktop)"
+              fill="url(#fillAvailable)"
+              stroke="var(--color-available)"
               stackId="a"
             />
           </AreaChart>

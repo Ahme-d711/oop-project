@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import {
-  IconCamera,
+  IconBook,
+  IconBookmark,
   IconChartBar,
   IconDashboard,
   IconDatabase,
@@ -17,6 +18,7 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
+  IconUserPlus,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -35,81 +37,93 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Librarian",
+    email: "librarian@library.com",
+    avatar: "/avatars/librarian.jpg",
   },
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
+      title: "Books",
+      url: "/books",
+      icon: IconBook,
+    },
+    {
+      title: "Members",
+      url: "/members",
+      icon: IconUsers,
+    },
+    {
+      title: "Borrowing",
+      url: "/borrowing",
+      icon: IconBookmark,
     },
     {
       title: "Analytics",
-      url: "#",
+      url: "/dashboard",
       icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
-      icon: IconCamera,
+      title: "Book Management",
+      icon: IconBook,
       isActive: true,
-      url: "#",
+      url: "/books",
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: "All Books",
+          url: "/books",
         },
         {
-          title: "Archived",
-          url: "#",
+          title: "Add New Book",
+          url: "/books",
+        },
+        {
+          title: "Categories",
+          url: "/books",
         },
       ],
     },
     {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
+      title: "Member Management",
+      icon: IconUserPlus,
+      url: "/members",
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: "All Members",
+          url: "/members",
         },
         {
-          title: "Archived",
-          url: "#",
+          title: "Register New Member",
+          url: "/members",
+        },
+        {
+          title: "Member Types",
+          url: "/members",
         },
       ],
     },
     {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
+      title: "Reports",
+      icon: IconReport,
+      url: "/borrowing",
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: "Borrowing History",
+          url: "/borrowing",
         },
         {
-          title: "Archived",
-          url: "#",
+          title: "Overdue Books",
+          url: "/borrowing",
+        },
+        {
+          title: "Popular Books",
+          url: "/dashboard",
         },
       ],
     },
@@ -121,29 +135,29 @@ const data = {
       icon: IconSettings,
     },
     {
-      title: "Get Help",
+      title: "Help",
       url: "#",
       icon: IconHelp,
     },
     {
       title: "Search",
-      url: "#",
+      url: "/books",
       icon: IconSearch,
     },
   ],
   documents: [
     {
       name: "Data Library",
-      url: "#",
+      url: "/dashboard",
       icon: IconDatabase,
     },
     {
       name: "Reports",
-      url: "#",
+      url: "/borrowing",
       icon: IconReport,
     },
     {
-      name: "Word Assistant",
+      name: "Writing Assistant",
       url: "#",
       icon: IconFileWord,
     },
@@ -162,7 +176,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Library System</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
