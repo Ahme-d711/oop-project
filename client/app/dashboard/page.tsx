@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/sidebar"
 
 import { getLibraryStats } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
+import { toast } from "sonner"
 
 export default function Page() {
   const [libraryData, setLibraryData] = React.useState<any>(null)
@@ -24,7 +26,9 @@ export default function Page() {
       const data = await getLibraryStats()
       setLibraryData(data)
     } catch (error) {
+      const errorMessage = handleApiError(error)
       console.error("Failed to fetch library data:", error)
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

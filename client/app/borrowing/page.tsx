@@ -8,17 +8,12 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { IconBookmark, IconRefresh, IconBook, IconUsers, IconClock } from "@tabler/icons-react"
+import { StatCard } from "@/components/stat-card"
 
 import { getBooks, getMembers, Book, Member } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
 import { toast } from "sonner"
 
 export default function BorrowingPage() {
@@ -36,8 +31,9 @@ export default function BorrowingPage() {
       setBooks(booksData)
       setMembers(membersData)
     } catch (error) {
+      const errorMessage = handleApiError(error)
       console.error("Failed to fetch data:", error)
-      toast.error("فشل في تحميل البيانات")
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -97,42 +93,30 @@ export default function BorrowingPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">الكتب المتاحة</CardTitle>
-                  <IconBook className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{stats.availableBooks}</div>
-                  <p className="text-xs text-muted-foreground">
-                    متاحة للاستعارة
-                  </p>
-                </CardContent>
-              </Card>
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">الكتب المستعارة</CardTitle>
-                  <IconBookmark className="h-4 w-4 text-orange-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-orange-600">{stats.borrowedBooks}</div>
-                  <p className="text-xs text-muted-foreground">
-                    مستعارة حالياً
-                  </p>
-                </CardContent>
-              </Card>
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">إجمالي الأعضاء</CardTitle>
-                  <IconUsers className="h-4 w-4 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-blue-600">{stats.totalMembers}</div>
-                  <p className="text-xs text-muted-foreground">
-                    أعضاء مسجلون
-                  </p>
-                </CardContent>
-              </Card>
+              <StatCard
+                title="الكتب المتاحة"
+                value={stats.availableBooks}
+                description="متاحة للاستعارة"
+                icon={IconBook}
+                iconColor="text-green-600"
+                valueColor="text-green-600"
+              />
+              <StatCard
+                title="الكتب المستعارة"
+                value={stats.borrowedBooks}
+                description="مستعارة حالياً"
+                icon={IconBookmark}
+                iconColor="text-orange-600"
+                valueColor="text-orange-600"
+              />
+              <StatCard
+                title="إجمالي الأعضاء"
+                value={stats.totalMembers}
+                description="أعضاء مسجلون"
+                icon={IconUsers}
+                iconColor="text-blue-600"
+                valueColor="text-blue-600"
+              />
             </div>
 
             {/* Borrowing Management Component */}

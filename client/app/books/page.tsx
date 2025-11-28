@@ -10,17 +10,12 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { IconBook, IconPlus, IconRefresh } from "@tabler/icons-react"
+import { StatCard } from "@/components/stat-card"
 
 import { getBooks, searchBooks, Book } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
 import { toast } from "sonner"
 
 export default function BooksPage() {
@@ -37,8 +32,9 @@ export default function BooksPage() {
       setBooks(data)
       setFilteredBooks(data)
     } catch (error) {
+      const errorMessage = handleApiError(error)
       console.error("Failed to fetch books:", error)
-      toast.error("فشل في تحميل الكتب")
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -55,8 +51,9 @@ export default function BooksPage() {
       const searchResults = await searchBooks(term)
       setFilteredBooks(searchResults)
     } catch (error) {
+      const errorMessage = handleApiError(error)
       console.error("Search failed:", error)
-      toast.error("فشل في البحث")
+      toast.error(errorMessage)
     }
   }, [books])
 
@@ -128,42 +125,28 @@ export default function BooksPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">إجمالي الكتب</CardTitle>
-                  <IconBook className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.total}</div>
-                  <p className="text-xs text-muted-foreground">
-                    جميع الكتب في المكتبة
-                  </p>
-                </CardContent>
-              </Card>
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">الكتب المتاحة</CardTitle>
-                  <IconBook className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">{stats.available}</div>
-                  <p className="text-xs text-muted-foreground">
-                    متاحة للاستعارة
-                  </p>
-                </CardContent>
-              </Card>
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">الكتب المستعارة</CardTitle>
-                  <IconBook className="h-4 w-4 text-orange-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-orange-600">{stats.borrowed}</div>
-                  <p className="text-xs text-muted-foreground">
-                    مستعارة حالياً
-                  </p>
-                </CardContent>
-              </Card>
+              <StatCard
+                title="إجمالي الكتب"
+                value={stats.total}
+                description="جميع الكتب في المكتبة"
+                icon={IconBook}
+              />
+              <StatCard
+                title="الكتب المتاحة"
+                value={stats.available}
+                description="متاحة للاستعارة"
+                icon={IconBook}
+                iconColor="text-green-600"
+                valueColor="text-green-600"
+              />
+              <StatCard
+                title="الكتب المستعارة"
+                value={stats.borrowed}
+                description="مستعارة حالياً"
+                icon={IconBook}
+                iconColor="text-orange-600"
+                valueColor="text-orange-600"
+              />
             </div>
 
             {/* Search and Filter */}

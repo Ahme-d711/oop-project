@@ -9,16 +9,13 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { IconUsers, IconRefresh, IconSchool, IconUser } from "@tabler/icons-react"
+import { StatCard } from "@/components/stat-card"
 
 import { getMembers, getBooks, Member, Book } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
+import { MEMBER_TYPES } from "@/lib/constants"
 import { toast } from "sonner"
 
 export default function MembersPage() {
@@ -36,8 +33,9 @@ export default function MembersPage() {
       setMembers(membersData)
       setBooks(booksData)
     } catch (error) {
+      const errorMessage = handleApiError(error)
       console.error("Failed to fetch data:", error)
-      toast.error("فشل في تحميل البيانات")
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -49,8 +47,8 @@ export default function MembersPage() {
 
   const stats = React.useMemo(() => {
     const total = members.length
-    const students = members.filter(member => member.memberType === 'student').length
-    const teachers = members.filter(member => member.memberType === 'teacher').length
+    const students = members.filter(member => member.memberType === MEMBER_TYPES.STUDENT).length
+    const teachers = members.filter(member => member.memberType === MEMBER_TYPES.TEACHER).length
     
     return { total, students, teachers }
   }, [members])
@@ -98,42 +96,28 @@ export default function MembersPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">إجمالي الأعضاء</CardTitle>
-                  <IconUsers className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.total}</div>
-                  <p className="text-xs text-muted-foreground">
-                    جميع أعضاء المكتبة
-                  </p>
-                </CardContent>
-              </Card>
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">الطلاب</CardTitle>
-                  <IconSchool className="h-4 w-4 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-blue-600">{stats.students}</div>
-                  <p className="text-xs text-muted-foreground">
-                    أعضاء طلاب
-                  </p>
-                </CardContent>
-              </Card>
-              <Card dir="rtl">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">المدرسون</CardTitle>
-                  <IconUser className="h-4 w-4 text-purple-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-purple-600">{stats.teachers}</div>
-                  <p className="text-xs text-muted-foreground">
-                    أعضاء مدرسون
-                  </p>
-                </CardContent>
-              </Card>
+              <StatCard
+                title="إجمالي الأعضاء"
+                value={stats.total}
+                description="جميع أعضاء المكتبة"
+                icon={IconUsers}
+              />
+              <StatCard
+                title="الطلاب"
+                value={stats.students}
+                description="أعضاء طلاب"
+                icon={IconSchool}
+                iconColor="text-blue-600"
+                valueColor="text-blue-600"
+              />
+              <StatCard
+                title="المدرسون"
+                value={stats.teachers}
+                description="أعضاء مدرسون"
+                icon={IconUser}
+                iconColor="text-purple-600"
+                valueColor="text-purple-600"
+              />
             </div>
 
             {/* Members Table */}

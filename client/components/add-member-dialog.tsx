@@ -33,12 +33,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { registerMember } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
+import { MEMBER_TYPES } from "@/lib/constants"
 import { toast } from "sonner"
 
 const memberFormSchema = z.object({
   name: z.string().min(1, "الاسم مطلوب").max(100, "يجب أن يكون الاسم أقل من 100 حرف"),
   email: z.string().email("عنوان بريد إلكتروني غير صحيح"),
-  memberType: z.enum(["student", "teacher"], {
+  memberType: z.enum([MEMBER_TYPES.STUDENT, MEMBER_TYPES.TEACHER], {
     message: "نوع العضو مطلوب",
   }),
   idNumber: z.string().min(1, "رقم الهوية مطلوب").max(20, "يجب أن يكون رقم الهوية أقل من 20 حرف"),
@@ -73,7 +75,8 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
       setOpen(false)
       onMemberAdded?.()
     } catch (error) {
-      toast.error("فشل في إضافة العضو. يرجى المحاولة مرة أخرى.")
+      const errorMessage = handleApiError(error)
+      toast.error(errorMessage)
       console.error("Error adding member:", error)
     } finally {
       setIsLoading(false)
@@ -140,8 +143,8 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="student">طالب</SelectItem>
-                      <SelectItem value="teacher">مدرس</SelectItem>
+                      <SelectItem value={MEMBER_TYPES.STUDENT}>طالب</SelectItem>
+                      <SelectItem value={MEMBER_TYPES.TEACHER}>مدرس</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

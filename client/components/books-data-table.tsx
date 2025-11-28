@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion } from "motion/react"
-import { IconBook, IconBookmark, IconCheck, IconX, IconTrash, IconEdit, IconEye, IconLoader } from "@tabler/icons-react"
+import { IconBook, IconBookmark, IconCheck, IconTrash, IconEdit, IconEye, IconLoader } from "@tabler/icons-react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -18,8 +18,6 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { z } from "zod"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -40,6 +38,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Book, deleteBook } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
 import { AddBookDialog } from "@/components/add-book-dialog"
 import { toast } from "sonner"
 import {
@@ -54,13 +53,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-const bookSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  author: z.string(),
-  isAvailable: z.boolean(),
-  borrowedByMemberId: z.string().optional(),
-})
+interface TableMeta {
+  onRefresh?: () => void
+}
 
 function ActionsCell({ book, table }: { book: Book; table: TanStackTable<Book> }) {
   const [isDeleting, setIsDeleting] = React.useState(false)
@@ -73,12 +68,13 @@ function ActionsCell({ book, table }: { book: Book; table: TanStackTable<Book> }
       toast.success("تم حذف الكتاب بنجاح")
       setOpen(false)
       // Refresh the table data
-      const tableProps = table.options.meta as { onRefresh?: () => void }
+      const tableProps = table.options.meta as TableMeta
       if (tableProps?.onRefresh) {
         tableProps.onRefresh()
       }
     } catch (error) {
-      toast.error("فشل في حذف الكتاب")
+      const errorMessage = handleApiError(error)
+      toast.error(errorMessage)
       console.error("Delete failed:", error)
     } finally {
       setIsDeleting(false)

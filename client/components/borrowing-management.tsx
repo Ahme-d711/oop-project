@@ -41,6 +41,8 @@ import {
 import { Separator } from "@/components/ui/separator"
 
 import { Book, Member, borrowBook, returnBook } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
+import { MEMBER_TYPES } from "@/lib/constants"
 import { toast } from "sonner"
 
 const borrowFormSchema = z.object({
@@ -104,7 +106,8 @@ export function BorrowingManagement({
       borrowForm.reset()
       onRefresh?.()
     } catch (error) {
-      toast.error("فشل في استعارة الكتاب. يرجى المحاولة مرة أخرى.")
+      const errorMessage = handleApiError(error)
+      toast.error(errorMessage)
       console.error("Error borrowing book:", error)
     } finally {
       setIsBorrowing(false)
@@ -119,7 +122,8 @@ export function BorrowingManagement({
       returnForm.reset()
       onRefresh?.()
     } catch (error) {
-      toast.error("فشل في إرجاع الكتاب. يرجى المحاولة مرة أخرى.")
+      const errorMessage = handleApiError(error)
+      toast.error(errorMessage)
       console.error("Error returning book:", error)
     } finally {
       setIsReturning(false)
@@ -209,7 +213,7 @@ export function BorrowingManagement({
                                 <IconUsers className="size-4" />
                                 <span>{member.name}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {member.memberType === 'student' ? 'طالب' : 'مدرس'}
+                                  {member.memberType === MEMBER_TYPES.STUDENT ? 'طالب' : 'مدرس'}
                                 </Badge>
                               </div>
                             </SelectItem>
@@ -306,7 +310,7 @@ export function BorrowingManagement({
                                 <IconUsers className="size-4" />
                                 <span>{member.name}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {member.memberType === 'student' ? 'طالب' : 'مدرس'}
+                                  {member.memberType === MEMBER_TYPES.STUDENT ? 'طالب' : 'مدرس'}
                                 </Badge>
                               </div>
                             </SelectItem>
@@ -381,8 +385,8 @@ export function BorrowingManagement({
                         </TableCell>
                         <TableCell>
                           {member && (
-                            <Badge variant={member.memberType === 'student' ? 'default' : 'secondary'}>
-                              {member.memberType === 'student' ? 'طالب' : 'مدرس'}
+                            <Badge variant={member.memberType === MEMBER_TYPES.STUDENT ? 'default' : 'secondary'}>
+                              {member.memberType === MEMBER_TYPES.STUDENT ? 'طالب' : 'مدرس'}
                             </Badge>
                           )}
                         </TableCell>

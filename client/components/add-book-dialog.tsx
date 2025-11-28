@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { createBook } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
 import { toast } from "sonner"
 
 const bookFormSchema = z.object({
@@ -61,7 +62,8 @@ export function AddBookDialog({ onBookAdded, trigger }: AddBookDialogProps) {
       setOpen(false)
       onBookAdded?.()
     } catch (error) {
-      toast.error("فشل في إضافة الكتاب. يرجى المحاولة مرة أخرى.")
+      const errorMessage = handleApiError(error)
+      toast.error(errorMessage)
       console.error("Error adding book:", error)
     } finally {
       setIsLoading(false)

@@ -38,6 +38,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Member, Book, deleteMember } from "@/lib/api"
+import { handleApiError } from "@/lib/errors"
+import { MEMBER_TYPES } from "@/lib/constants"
 import { AddMemberDialog } from "@/components/add-member-dialog"
 import { MemberDetailsDialog } from "@/components/member-details-dialog"
 import { toast } from "sonner"
@@ -53,10 +55,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+interface TableMeta {
+  books?: Book[]
+  onRefresh?: () => void
+}
+
 function ActionsCell({ member, table, books }: { member: Member; table: TanStackTable<Member>; books: Book[] }) {
   const [isDeleting, setIsDeleting] = React.useState(false)
   const [open, setOpen] = React.useState(false)
-  const tableProps = table.options.meta as { books?: Book[]; onRefresh?: () => void }
+  const tableProps = table.options.meta as TableMeta
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -69,7 +76,7 @@ function ActionsCell({ member, table, books }: { member: Member; table: TanStack
         tableProps.onRefresh()
       }
     } catch (error) {
-      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "فشل في حذف العضو"
+      const errorMessage = handleApiError(error)
       toast.error(errorMessage)
       console.error("Delete failed:", error)
     } finally {
@@ -189,8 +196,8 @@ const columns: ColumnDef<Member>[] = [
     accessorKey: "memberType",
     header: "النوع",
     cell: ({ row }) => {
-      const memberType = row.getValue("memberType") as string
-      const isStudent = memberType === "student"
+      const memberType = row.getValue("memberType") as Member['memberType']
+      const isStudent = memberType === MEMBER_TYPES.STUDENT
       
       return (
         <Badge variant={isStudent ? "default" : "secondary"}>
@@ -209,9 +216,9 @@ const columns: ColumnDef<Member>[] = [
       )
     },
     filterFn: (row, id, value) => {
-      const memberType = row.getValue(id) as string
-      if (value === "student") return memberType === "student"
-      if (value === "teacher") return memberType === "teacher"
+      const memberType = row.getValue(id) as Member['memberType']
+      if (value === MEMBER_TYPES.STUDENT) return memberType === MEMBER_TYPES.STUDENT
+      if (value === MEMBER_TYPES.TEACHER) return memberType === MEMBER_TYPES.TEACHER
       return true
     },
   },
@@ -232,7 +239,7 @@ const columns: ColumnDef<Member>[] = [
     header: "الإجراءات",
     cell: ({ row, table }) => {
       const member = row.original
-      const tableProps = table.options.meta as { books?: Book[]; onRefresh?: () => void }
+      const tableProps = table.options.meta as TableMeta
       return <ActionsCell member={member} table={table} books={tableProps?.books || []} />
     },
   },
