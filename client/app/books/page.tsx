@@ -11,7 +11,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { IconBook, IconPlus, IconRefresh } from "@tabler/icons-react"
+import { IconBook, IconRefresh } from "@tabler/icons-react"
 import { StatCard } from "@/components/stat-card"
 
 import { getBooks, searchBooks, Book } from "@/lib/api"

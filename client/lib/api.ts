@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ApiError, handleApiError } from './errors';
+import { ApiError } from './errors';
 import { API_TIMEOUT } from './constants';
 
 const api = axios.create({
@@ -74,91 +74,51 @@ export interface BorrowBookDto {
   memberId: string;
 }
 
-// API functions with proper error handling
+// API functions - errors are handled by interceptors
 export const getBooks = async (): Promise<Book[]> => {
-  try {
-    const response = await api.get<Book[]>('/books');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get<Book[]>('/books');
+  return response.data;
 };
 
 export const createBook = async (data: CreateBookDto): Promise<Book> => {
-  try {
-    const response = await api.post<Book>('/books', data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post<Book>('/books', data);
+  return response.data;
 };
 
 export const deleteBook = async (id: string): Promise<void> => {
-  try {
-    await api.delete(`/books/${id}`);
-  } catch (error) {
-    throw error;
-  }
+  await api.delete(`/books/${id}`);
 };
 
 export const searchBooks = async (term: string): Promise<Book[]> => {
-  try {
-    const response = await api.get<Book[]>(`/books/search?term=${encodeURIComponent(term)}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get<Book[]>(`/books/search?term=${encodeURIComponent(term)}`);
+  return response.data;
 };
 
 export const getMembers = async (): Promise<Member[]> => {
-  try {
-    const response = await api.get<Member[]>('/members');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get<Member[]>('/members');
+  return response.data;
 };
 
 export const registerMember = async (data: CreateMemberDto): Promise<Member> => {
-  try {
-    const response = await api.post<Member>('/members', data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post<Member>('/members', data);
+  return response.data;
 };
 
 export const deleteMember = async (id: string): Promise<void> => {
-  try {
-    await api.delete(`/members/${id}`);
-  } catch (error) {
-    throw error;
-  }
+  await api.delete(`/members/${id}`);
 };
 
 export const borrowBook = async (data: BorrowBookDto): Promise<void> => {
-  try {
-    await api.post('/borrow/borrow', data);
-  } catch (error) {
-    throw error;
-  }
+  await api.post('/borrow/borrow', data);
 };
 
 export const returnBook = async (data: BorrowBookDto): Promise<void> => {
-  try {
-    await api.post('/borrow/return', data);
-  } catch (error) {
-    throw error;
-  }
+  await api.post('/borrow/return', data);
 };
 
 export const getBorrowedBooks = async (memberId: string): Promise<Book[]> => {
-  try {
-    const response = await api.get<Book[]>(`/borrow/member/${memberId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get<Book[]>(`/borrow/member/${memberId}`);
+  return response.data;
 };
 
 // Analytics functions

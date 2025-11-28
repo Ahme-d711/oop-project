@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { motion } from "motion/react"
 import { LucideIcon } from "lucide-react"
 import { Icon } from "@tabler/icons-react"

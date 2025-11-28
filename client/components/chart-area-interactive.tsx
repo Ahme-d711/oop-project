@@ -47,7 +47,6 @@ const generateLibraryData = (stats: LibraryStats) => {
   const data = []
   const today = new Date()
   const totalBooks = stats.totalBooks || 10
-  const baseAvailable = Math.max(3, stats.availableBooks || 5)
   const baseBorrowed = Math.max(0, stats.borrowedBooks || 2)
   
   for (let i = 29; i >= 0; i--) {
@@ -90,7 +89,6 @@ const generateFallbackData = () => {
   const data = []
   const today = new Date()
   const totalBooks = 10
-  const baseAvailable = 7
   const baseBorrowed = 3
   
   for (let i = 29; i >= 0; i--) {

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { IconBookmark, IconBook, IconUsers, IconArrowRight, IconArrowLeft, IconLoader, IconCheck, IconX } from "@tabler/icons-react"
+import { IconBookmark, IconBook, IconUsers, IconArrowRight, IconArrowLeft, IconLoader, IconCheck } from "@tabler/icons-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -38,8 +38,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Separator } from "@/components/ui/separator"
-
 import { Book, Member, borrowBook, returnBook } from "@/lib/api"
 import { handleApiError } from "@/lib/errors"
 import { MEMBER_TYPES } from "@/lib/constants"
@@ -128,16 +126,6 @@ export function BorrowingManagement({
     } finally {
       setIsReturning(false)
     }
-  }
-
-  const getBookTitle = (bookId: string) => {
-    const book = books.find(b => b.id === bookId)
-    return book ? book.title : bookId
-  }
-
-  const getMemberName = (memberId: string) => {
-    const member = members.find(m => m.id === memberId)
-    return member ? member.name : memberId
   }
 
   return (

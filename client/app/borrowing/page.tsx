@@ -9,7 +9,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { IconBookmark, IconRefresh, IconBook, IconUsers, IconClock } from "@tabler/icons-react"
+import { IconBookmark, IconRefresh, IconBook, IconUsers } from "@tabler/icons-react"
 import { StatCard } from "@/components/stat-card"
 
 import { getBooks, getMembers, Book, Member } from "@/lib/api"
