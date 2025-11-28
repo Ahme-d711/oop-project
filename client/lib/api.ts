@@ -70,6 +70,10 @@ export const registerMember = async (data: CreateMemberDto): Promise<Member> => 
   return response.data;
 };
 
+export const deleteMember = async (id: string): Promise<void> => {
+  await api.delete(`/members/${id}`);
+};
+
 export const borrowBook = async (data: BorrowBookDto): Promise<void> => {
   await api.post('/borrow/borrow', data);
 };

@@ -29,8 +29,8 @@ import { createBook } from "@/lib/api"
 import { toast } from "sonner"
 
 const bookFormSchema = z.object({
-  title: z.string().min(1, "Title is required").max(100, "Title must be less than 100 characters"),
-  author: z.string().min(1, "Author is required").max(100, "Author must be less than 100 characters"),
+  title: z.string().min(1, "العنوان مطلوب").max(100, "يجب أن يكون العنوان أقل من 100 حرف"),
+  author: z.string().min(1, "المؤلف مطلوب").max(100, "يجب أن يكون اسم المؤلف أقل من 100 حرف"),
 })
 
 type BookFormValues = z.infer<typeof bookFormSchema>
@@ -56,12 +56,12 @@ export function AddBookDialog({ onBookAdded, trigger }: AddBookDialogProps) {
     setIsLoading(true)
     try {
       await createBook(data)
-      toast.success("Book added successfully!")
+      toast.success("تم إضافة الكتاب بنجاح!")
       form.reset()
       setOpen(false)
       onBookAdded?.()
     } catch (error) {
-      toast.error("Failed to add book. Please try again.")
+      toast.error("فشل في إضافة الكتاب. يرجى المحاولة مرة أخرى.")
       console.error("Error adding book:", error)
     } finally {
       setIsLoading(false)
@@ -80,9 +80,9 @@ export function AddBookDialog({ onBookAdded, trigger }: AddBookDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Book</DialogTitle>
+          <DialogTitle>إضافة كتاب جديد</DialogTitle>
           <DialogDescription>
-            Add a new book to the library collection. Fill in the title and author information.
+            إضافة كتاب جديد إلى مجموعة المكتبة. املأ معلومات العنوان والمؤلف.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -92,9 +92,9 @@ export function AddBookDialog({ onBookAdded, trigger }: AddBookDialogProps) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>العنوان</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter book title" {...field} />
+                    <Input placeholder="أدخل عنوان الكتاب" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -105,9 +105,9 @@ export function AddBookDialog({ onBookAdded, trigger }: AddBookDialogProps) {
               name="author"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Author</FormLabel>
+                  <FormLabel>المؤلف</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter author name" {...field} />
+                    <Input placeholder="أدخل اسم المؤلف" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,11 +115,11 @@ export function AddBookDialog({ onBookAdded, trigger }: AddBookDialogProps) {
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                Cancel
+                إلغاء
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <IconLoader className="size-4 mr-2 animate-spin" />}
-                Add Book
+                إضافة كتاب
               </Button>
             </DialogFooter>
           </form>

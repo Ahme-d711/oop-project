@@ -120,3 +120,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Active sidebar button styles */
+  [data-active="true"] {
+    @apply bg-sidebar-accent text-sidebar-accent-foreground font-medium;
+  }
+
+  /* Active toggle button styles */
+  [data-state="on"] {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  [data-state="on"]:hover {
+    @apply bg-primary/90;
+  }
+
+  /* Toggle group active state */
+  [data-slot="toggle-group-item"][data-state="on"] {
+    @apply bg-primary text-primary-foreground shadow-sm;
+  }
+
+  [data-slot="toggle-group-item"][data-state="on"]:hover {
+    @apply bg-primary/90;
+  }
+}

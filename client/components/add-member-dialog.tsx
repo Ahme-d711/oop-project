@@ -36,12 +36,12 @@ import { registerMember } from "@/lib/api"
 import { toast } from "sonner"
 
 const memberFormSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
-  email: z.string().email("Invalid email address"),
+  name: z.string().min(1, "الاسم مطلوب").max(100, "يجب أن يكون الاسم أقل من 100 حرف"),
+  email: z.string().email("عنوان بريد إلكتروني غير صحيح"),
   memberType: z.enum(["student", "teacher"], {
-    message: "Member type is required",
+    message: "نوع العضو مطلوب",
   }),
-  idNumber: z.string().min(1, "ID number is required").max(20, "ID number must be less than 20 characters"),
+  idNumber: z.string().min(1, "رقم الهوية مطلوب").max(20, "يجب أن يكون رقم الهوية أقل من 20 حرف"),
 })
 
 type MemberFormValues = z.infer<typeof memberFormSchema>
@@ -68,12 +68,12 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
     setIsLoading(true)
     try {
       await registerMember(data)
-      toast.success("Member added successfully!")
+      toast.success("تم إضافة العضو بنجاح!")
       form.reset()
       setOpen(false)
       onMemberAdded?.()
     } catch (error) {
-      toast.error("Failed to add member. Please try again.")
+      toast.error("فشل في إضافة العضو. يرجى المحاولة مرة أخرى.")
       console.error("Error adding member:", error)
     } finally {
       setIsLoading(false)
@@ -85,14 +85,14 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
       <DialogTrigger asChild>
         <Button variant="default" size="sm">
           <IconUserPlus className="size-4 mr-2" />
-          Add Member
+          إضافة عضو
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Member</DialogTitle>
+          <DialogTitle>إضافة عضو جديد</DialogTitle>
           <DialogDescription>
-            Add a new member to the library. Fill in the member information below.
+            إضافة عضو جديد إلى المكتبة. املأ معلومات العضو أدناه.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -102,9 +102,9 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>الاسم الكامل</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter full name" {...field} />
+                    <Input placeholder="أدخل الاسم الكامل" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,11 +115,11 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>البريد الإلكتروني</FormLabel>
                   <FormControl>
                     <Input 
                       type="email" 
-                      placeholder="Enter email address" 
+                      placeholder="أدخل عنوان البريد الإلكتروني" 
                       {...field} 
                     />
                   </FormControl>
@@ -132,16 +132,16 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
               name="memberType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Member Type</FormLabel>
+                  <FormLabel>نوع العضو</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select member type" />
+                        <SelectValue placeholder="اختر نوع العضو" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="student">Student</SelectItem>
-                      <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="student">طالب</SelectItem>
+                      <SelectItem value="teacher">مدرس</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -153,9 +153,9 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
               name="idNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ID Number</FormLabel>
+                  <FormLabel>رقم الهوية</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter ID number" {...field} />
+                    <Input placeholder="أدخل رقم الهوية" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -163,11 +163,11 @@ export function AddMemberDialog({ onMemberAdded }: AddMemberDialogProps) {
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                Cancel
+                إلغاء
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <IconLoader className="size-4 mr-2 animate-spin" />}
-                Add Member
+                إضافة عضو
               </Button>
             </DialogFooter>
           </form>

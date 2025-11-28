@@ -139,7 +139,7 @@ export function BorrowingManagement({
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {/* Borrow Book Section */}
-      <Card>
+      <Card dir="rtl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <IconBookmark className="size-5" />
@@ -167,7 +167,7 @@ export function BorrowingManagement({
                       <SelectContent>
                         {availableBooks.length === 0 ? (
                           <div className="p-2 text-sm text-muted-foreground text-center">
-                            No available books
+                            لا توجد كتب متاحة
                           </div>
                         ) : (
                           availableBooks.map((book) => (
@@ -190,17 +190,17 @@ export function BorrowingManagement({
                 name="memberId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Member</FormLabel>
+                    <FormLabel>العضو</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a member" />
+                          <SelectValue placeholder="اختر عضواً" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {members.length === 0 ? (
                           <div className="p-2 text-sm text-muted-foreground text-center">
-                            No registered members
+                            لا يوجد أعضاء مسجلون
                           </div>
                         ) : (
                           members.map((member) => (
@@ -209,7 +209,7 @@ export function BorrowingManagement({
                                 <IconUsers className="size-4" />
                                 <span>{member.name}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {member.memberType === 'student' ? 'Student' : 'Teacher'}
+                                  {member.memberType === 'student' ? 'طالب' : 'مدرس'}
                                 </Badge>
                               </div>
                             </SelectItem>
@@ -236,7 +236,7 @@ export function BorrowingManagement({
       </Card>
 
       {/* Return Book Section */}
-      <Card>
+      <Card dir="rtl">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <IconArrowLeft className="size-5" />
@@ -264,7 +264,7 @@ export function BorrowingManagement({
                       <SelectContent>
                         {borrowedBooks.length === 0 ? (
                           <div className="p-2 text-sm text-muted-foreground text-center">
-                            No borrowed books
+                            لا توجد كتب مستعارة
                           </div>
                         ) : (
                           borrowedBooks.map((book) => (
@@ -287,17 +287,17 @@ export function BorrowingManagement({
                 name="memberId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Member</FormLabel>
+                    <FormLabel>العضو</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select the borrowing member" />
+                          <SelectValue placeholder="اختر العضو المستعير" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {members.length === 0 ? (
                           <div className="p-2 text-sm text-muted-foreground text-center">
-                            No registered members
+                            لا يوجد أعضاء مسجلون
                           </div>
                         ) : (
                           members.map((member) => (
@@ -306,7 +306,7 @@ export function BorrowingManagement({
                                 <IconUsers className="size-4" />
                                 <span>{member.name}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {member.memberType === 'student' ? 'Student' : 'Teacher'}
+                                  {member.memberType === 'student' ? 'طالب' : 'مدرس'}
                                 </Badge>
                               </div>
                             </SelectItem>
@@ -335,7 +335,7 @@ export function BorrowingManagement({
 
       {/* Currently Borrowed Books */}
       <Card className="lg:col-span-2">
-        <CardHeader>
+        <CardHeader dir="rtl">
           <CardTitle className="flex items-center gap-2">
             <IconBookmark className="size-5" />
             الكتب المستعارة حالياً

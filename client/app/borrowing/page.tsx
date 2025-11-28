@@ -75,13 +75,12 @@ export default function BorrowingPage() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-6 p-4 lg:p-6">
             {/* Header Section */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div dir="rtl" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">إدارة الاستعارة</h1>
                 <p className="text-muted-foreground">
@@ -98,7 +97,7 @@ export default function BorrowingPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">الكتب المتاحة</CardTitle>
                   <IconBook className="h-4 w-4 text-green-600" />
@@ -110,7 +109,7 @@ export default function BorrowingPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">الكتب المستعارة</CardTitle>
                   <IconBookmark className="h-4 w-4 text-orange-600" />
@@ -122,7 +121,7 @@ export default function BorrowingPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">إجمالي الأعضاء</CardTitle>
                   <IconUsers className="h-4 w-4 text-blue-600" />
@@ -146,6 +145,7 @@ export default function BorrowingPage() {
           </div>
         </div>
       </SidebarInset>
+      <AppSidebar variant="inset" />
     </SidebarProvider>
   )
 }

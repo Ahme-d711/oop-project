@@ -59,6 +59,22 @@ public class Library
         _borrowedBooks[member.Id] = new List<string>();
     }
 
+    // Remove a member from the library
+    public bool RemoveMember(string memberId)
+    {
+        var member = _members.FirstOrDefault(m => m.Id == memberId);
+        if (member == null)
+            return false;
+
+        // Check if member has borrowed books
+        if (_borrowedBooks.ContainsKey(memberId) && _borrowedBooks[memberId].Count > 0)
+            throw new InvalidOperationException("Cannot remove a member who has borrowed books. Please return all books first.");
+
+        _members.Remove(member);
+        _borrowedBooks.Remove(memberId);
+        return true;
+    }
+
     // Borrow a book
     public bool BorrowBook(string bookId, string memberId)
     {

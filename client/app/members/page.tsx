@@ -60,7 +60,7 @@ export default function MembersPage() {
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading members...</p>
+          <p className="mt-4 text-muted-foreground">جاري تحميل الأعضاء...</p>
         </div>
       </div>
     )
@@ -75,23 +75,22 @@ export default function MembersPage() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-6 p-4 lg:p-6">
             {/* Header Section */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div dir="rtl" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">Members Management</h1>
+                <h1 className="text-2xl font-bold tracking-tight">إدارة الأعضاء</h1>
                 <p className="text-muted-foreground">
-                  Manage library members including students and teachers
+                  إدارة أعضاء المكتبة بما في ذلك الطلاب والمدرسين
                 </p>
               </div>
               <div className="flex gap-2">
                 <Button onClick={fetchData} variant="outline" size="sm">
                   <IconRefresh className="size-4 mr-2" />
-                  Refresh
+                  تحديث
                 </Button>
                 <AddMemberDialog onMemberAdded={fetchData} />
               </div>
@@ -99,39 +98,39 @@ export default function MembersPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Members</CardTitle>
+                  <CardTitle className="text-sm font-medium">إجمالي الأعضاء</CardTitle>
                   <IconUsers className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.total}</div>
                   <p className="text-xs text-muted-foreground">
-                    All library members
+                    جميع أعضاء المكتبة
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Students</CardTitle>
+                  <CardTitle className="text-sm font-medium">الطلاب</CardTitle>
                   <IconSchool className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-blue-600">{stats.students}</div>
                   <p className="text-xs text-muted-foreground">
-                    Student members
+                    أعضاء طلاب
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Teachers</CardTitle>
+                  <CardTitle className="text-sm font-medium">المدرسون</CardTitle>
                   <IconUser className="h-4 w-4 text-purple-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-purple-600">{stats.teachers}</div>
                   <p className="text-xs text-muted-foreground">
-                    Teacher members
+                    أعضاء مدرسون
                   </p>
                 </CardContent>
               </Card>
@@ -147,6 +146,7 @@ export default function MembersPage() {
           </div>
         </div>
       </SidebarInset>
+      <AppSidebar variant="inset" />
     </SidebarProvider>
   )
 }

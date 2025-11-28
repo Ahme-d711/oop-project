@@ -105,13 +105,12 @@ export default function BooksPage() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-6 p-4 lg:p-6">
             {/* Header Section */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div dir="rtl" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">إدارة الكتب</h1>
                 <p className="text-muted-foreground">
@@ -129,7 +128,7 @@ export default function BooksPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">إجمالي الكتب</CardTitle>
                   <IconBook className="h-4 w-4 text-muted-foreground" />
@@ -141,7 +140,7 @@ export default function BooksPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">الكتب المتاحة</CardTitle>
                   <IconBook className="h-4 w-4 text-green-600" />
@@ -153,7 +152,7 @@ export default function BooksPage() {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card dir="rtl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">الكتب المستعارة</CardTitle>
                   <IconBook className="h-4 w-4 text-orange-600" />
@@ -186,6 +185,7 @@ export default function BooksPage() {
           </div>
         </div>
       </SidebarInset>
+      <AppSidebar variant="inset" />
     </SidebarProvider>
   )
 }

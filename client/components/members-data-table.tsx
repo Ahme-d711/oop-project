@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { IconUsers, IconSchool, IconUser, IconMail, IconId, IconEye, IconEdit, IconLoader } from "@tabler/icons-react"
+import { IconUsers, IconSchool, IconUser, IconMail, IconId, IconEye, IconEdit, IconLoader, IconTrash } from "@tabler/icons-react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,6 +13,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
+  Table as TanStackTable,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
@@ -36,9 +37,106 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Member, Book } from "@/lib/api"
+import { Member, Book, deleteMember } from "@/lib/api"
 import { AddMemberDialog } from "@/components/add-member-dialog"
 import { MemberDetailsDialog } from "@/components/member-details-dialog"
+import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
+function ActionsCell({ member, table, books }: { member: Member; table: TanStackTable<Member>; books: Book[] }) {
+  const [isDeleting, setIsDeleting] = React.useState(false)
+  const [open, setOpen] = React.useState(false)
+  const tableProps = table.options.meta as { books?: Book[]; onRefresh?: () => void }
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    try {
+      await deleteMember(member.id)
+      toast.success("تم حذف العضو بنجاح")
+      setOpen(false)
+      // Refresh the table data
+      if (tableProps?.onRefresh) {
+        tableProps.onRefresh()
+      }
+    } catch (error) {
+      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "فشل في حذف العضو"
+      toast.error(errorMessage)
+      console.error("Delete failed:", error)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  // Check if member has borrowed books
+  const hasBorrowedBooks = books.some(
+    book => !book.isAvailable && book.borrowedByMemberId === member.id
+  ) || false
+
+  return (
+    <div className="flex items-center gap-1">
+      <MemberDetailsDialog
+        member={member}
+        books={books}
+        trigger={
+          <Button variant="ghost" size="sm" title="عرض التفاصيل">
+            <IconEye className="size-4" />
+          </Button>
+        }
+      />
+      <Button variant="ghost" size="sm" title="تعديل">
+        <IconEdit className="size-4" />
+      </Button>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            disabled={hasBorrowedBooks}
+            title={hasBorrowedBooks ? "لا يمكن حذف عضو لديه كتب مستعارة" : "حذف"}
+            className="text-destructive hover:text-destructive"
+          >
+            <IconTrash className="size-4" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من حذف العضو &quot;{member.name}&quot;؟ لا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <IconLoader className="size-4 mr-2 animate-spin" />
+                  جاري الحذف...
+                </>
+              ) : (
+                "حذف"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  )
+}
 
 const columns: ColumnDef<Member>[] = [
   {
@@ -50,14 +148,14 @@ const columns: ColumnDef<Member>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="تحديد الكل"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="تحديد الصف"
       />
     ),
     enableSorting: false,
@@ -65,7 +163,7 @@ const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: "الاسم",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <IconUsers className="size-4 text-muted-foreground" />
@@ -77,7 +175,7 @@ const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: "البريد الإلكتروني",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <IconMail className="size-4 text-muted-foreground" />
@@ -89,7 +187,7 @@ const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "memberType",
-    header: "Type",
+    header: "النوع",
     cell: ({ row }) => {
       const memberType = row.getValue("memberType") as string
       const isStudent = memberType === "student"
@@ -99,12 +197,12 @@ const columns: ColumnDef<Member>[] = [
           {isStudent ? (
             <>
               <IconSchool className="size-3 mr-1" />
-              Student
+              طالب
             </>
           ) : (
             <>
               <IconUser className="size-3 mr-1" />
-              Teacher
+              مدرس
             </>
           )}
         </Badge>
@@ -119,7 +217,7 @@ const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "idNumber",
-    header: "ID Number",
+    header: "رقم الهوية",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <IconId className="size-4 text-muted-foreground" />
@@ -131,27 +229,11 @@ const columns: ColumnDef<Member>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
+    header: "الإجراءات",
     cell: ({ row, table }) => {
       const member = row.original
       const tableProps = table.options.meta as { books?: Book[]; onRefresh?: () => void }
-
-      return (
-        <div className="flex items-center gap-1">
-          <MemberDetailsDialog
-            member={member}
-            books={tableProps?.books || []}
-            trigger={
-              <Button variant="ghost" size="sm" title="View Details">
-                <IconEye className="size-4" />
-              </Button>
-            }
-          />
-          <Button variant="ghost" size="sm" title="Edit">
-            <IconEdit className="size-4" />
-          </Button>
-        </div>
-      )
+      return <ActionsCell member={member} table={table} books={tableProps?.books || []} />
     },
   },
 ]
@@ -196,16 +278,16 @@ export function MembersDataTable({ data, onRefresh, isLoading = false, books = [
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Members List</CardTitle>
+      <CardHeader dir="rtl">
+        <CardTitle>قائمة الأعضاء</CardTitle>
         <CardDescription>
-          Manage library members and track their information
+          إدارة أعضاء المكتبة وتتبع معلوماتهم
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center py-4">
           <Input
-            placeholder="Search members..."
+            placeholder="البحث في الأعضاء..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
@@ -263,10 +345,10 @@ export function MembersDataTable({ data, onRefresh, isLoading = false, books = [
                     {isLoading ? (
                       <div className="flex items-center justify-center gap-2">
                         <IconLoader className="size-4 animate-spin" />
-                        Loading...
+                        جاري التحميل...
                       </div>
                     ) : (
-                      "No members found."
+                      "لم يتم العثور على أعضاء."
                     )}
                   </TableCell>
                 </TableRow>
@@ -276,8 +358,8 @@ export function MembersDataTable({ data, onRefresh, isLoading = false, books = [
         </div>
         <div className="flex items-center justify-between space-x-2 py-4">
           <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            تم تحديد {table.getFilteredSelectedRowModel().rows.length} من{" "}
+            {table.getFilteredRowModel().rows.length} صف.
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -286,7 +368,7 @@ export function MembersDataTable({ data, onRefresh, isLoading = false, books = [
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage() || isLoading}
             >
-              Previous
+              السابق
             </Button>
             <Button
               variant="outline"
@@ -294,7 +376,7 @@ export function MembersDataTable({ data, onRefresh, isLoading = false, books = [
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage() || isLoading}
             >
-              Next
+              التالي
             </Button>
           </div>
         </div>

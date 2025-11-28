@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { motion } from "motion/react"
 import { IconBook, IconBookmark, IconCheck, IconX, IconTrash, IconEdit, IconEye, IconLoader } from "@tabler/icons-react"
 import {
   ColumnDef,
@@ -13,6 +14,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
+  Table as TanStackTable,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
@@ -40,6 +42,17 @@ import {
 import { Book, deleteBook } from "@/lib/api"
 import { AddBookDialog } from "@/components/add-book-dialog"
 import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const bookSchema = z.object({
   id: z.string(),
@@ -48,6 +61,79 @@ const bookSchema = z.object({
   isAvailable: z.boolean(),
   borrowedByMemberId: z.string().optional(),
 })
+
+function ActionsCell({ book, table }: { book: Book; table: TanStackTable<Book> }) {
+  const [isDeleting, setIsDeleting] = React.useState(false)
+  const [open, setOpen] = React.useState(false)
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    try {
+      await deleteBook(book.id)
+      toast.success("تم حذف الكتاب بنجاح")
+      setOpen(false)
+      // Refresh the table data
+      const tableProps = table.options.meta as { onRefresh?: () => void }
+      if (tableProps?.onRefresh) {
+        tableProps.onRefresh()
+      }
+    } catch (error) {
+      toast.error("فشل في حذف الكتاب")
+      console.error("Delete failed:", error)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      <Button variant="ghost" size="sm" title="عرض التفاصيل">
+        <IconEye className="size-4" />
+      </Button>
+      <Button variant="ghost" size="sm" title="تعديل">
+        <IconEdit className="size-4" />
+      </Button>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            disabled={!book.isAvailable}
+            title={!book.isAvailable ? "لا يمكن حذف كتاب مستعار" : "حذف"}
+            className="text-destructive hover:text-destructive"
+          >
+            <IconTrash className="size-4" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من حذف كتاب &quot;{book.title}&quot;؟ لا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <IconLoader className="size-4 mr-2 animate-spin" />
+                  جاري الحذف...
+                </>
+              ) : (
+                "حذف"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  )
+}
 
 const columns: ColumnDef<Book>[] = [
   {
@@ -59,14 +145,14 @@ const columns: ColumnDef<Book>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="تحديد الكل"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="تحديد الصف"
       />
     ),
     enableSorting: false,
@@ -74,7 +160,7 @@ const columns: ColumnDef<Book>[] = [
   },
   {
     accessorKey: "title",
-    header: "Title",
+    header: "العنوان",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <IconBook className="size-4 text-muted-foreground" />
@@ -86,7 +172,7 @@ const columns: ColumnDef<Book>[] = [
   },
   {
     accessorKey: "author",
-    header: "Author",
+    header: "المؤلف",
     cell: ({ row }) => (
       <div className="text-muted-foreground max-w-[150px] truncate" title={row.getValue("author") as string}>
         {row.getValue("author")}
@@ -95,7 +181,7 @@ const columns: ColumnDef<Book>[] = [
   },
   {
     accessorKey: "isAvailable",
-    header: "Status",
+    header: "الحالة",
     cell: ({ row }) => {
       const isAvailable = row.getValue("isAvailable") as boolean
       return (
@@ -141,57 +227,10 @@ const columns: ColumnDef<Book>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
+    header: "الإجراءات",
     cell: ({ row, table }) => {
       const book = row.original
-      const [isDeleting, setIsDeleting] = React.useState(false)
-
-      const handleDelete = async () => {
-        if (!confirm(`هل أنت متأكد من حذف كتاب "${book.title}"؟`)) {
-          return
-        }
-
-        setIsDeleting(true)
-        try {
-          await deleteBook(book.id)
-          toast.success("تم حذف الكتاب بنجاح")
-          // Refresh the table data
-          const tableProps = table.options.meta as any
-          if (tableProps?.onRefresh) {
-            tableProps.onRefresh()
-          }
-        } catch (error) {
-          toast.error("فشل في حذف الكتاب")
-          console.error("Delete failed:", error)
-        } finally {
-          setIsDeleting(false)
-        }
-      }
-
-      return (
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" title="عرض التفاصيل">
-            <IconEye className="size-4" />
-          </Button>
-          <Button variant="ghost" size="sm" title="Edit">
-            <IconEdit className="size-4" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleDelete}
-            disabled={isDeleting || !book.isAvailable}
-            title={!book.isAvailable ? "Cannot delete borrowed book" : "Delete"}
-            className="text-destructive hover:text-destructive"
-          >
-            {isDeleting ? (
-              <IconLoader className="size-4 animate-spin" />
-            ) : (
-              <IconTrash className="size-4" />
-            )}
-          </Button>
-        </div>
-      )
+      return <ActionsCell book={book} table={table} />
     },
   },
 ]
@@ -233,8 +272,13 @@ export function BooksDataTable({ data, onRefresh, isLoading = false }: BooksData
   })
 
   return (
-    <Card>
-      <CardHeader>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="mx-5">
+      <CardHeader dir="rtl">
         <CardTitle>مجموعة الكتب</CardTitle>
         <CardDescription>
           إدارة مجموعة الكتب في المكتبة وتتبع حالة الإتاحة
@@ -338,5 +382,6 @@ export function BooksDataTable({ data, onRefresh, isLoading = false }: BooksData
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   )
 }

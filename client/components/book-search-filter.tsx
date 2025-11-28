@@ -56,10 +56,10 @@ export function BookSearchFilter({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader dir="rtl">
         <CardTitle className="flex items-center gap-2">
-          <IconSearch className="size-5" />
           البحث والتصفية
+          <IconSearch className="size-5" />
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -82,7 +82,7 @@ export function BookSearchFilter({
               <IconFilter className="h-4 w-4 text-muted-foreground" />
               <Select value={statusFilter} onValueChange={onStatusFilter} disabled={isLoading}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Status" />
+                  <SelectValue placeholder="الحالة" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">جميع الكتب</SelectItem>
@@ -115,9 +115,9 @@ export function BookSearchFilter({
               ) : (
                 <>لا توجد نتائج</>
               )}
-              {searchTerm && <> for &ldquo;{searchTerm}&rdquo;</>}
+              {searchTerm && <> للبحث عن &ldquo;{searchTerm}&rdquo;</>}
               {statusFilter !== "all" && (
-                <> in {statusFilter === "available" ? "available" : "borrowed"} books</>
+                <> في {statusFilter === "available" ? "متاحة" : "مستعارة"}</>
               )}
             </div>
           )}
@@ -139,7 +139,7 @@ export function BookSearchFilter({
             )}
             {statusFilter !== "all" && (
               <Badge variant="secondary" className="gap-1">
-                Status: {statusFilter === "available" ? "Available" : "Borrowed"}
+                الحالة: {statusFilter === "available" ? "متاحة" : "مستعارة"}
                 <button
                   onClick={() => onStatusFilter("all")}
                   className="ml-1 hover:text-destructive"

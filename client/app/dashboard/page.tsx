@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { motion } from "motion/react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { BooksDataTable } from "@/components/books-data-table"
@@ -35,13 +36,35 @@ export default function Page() {
 
   if (isLoading || !libraryData) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex items-center justify-center min-h-screen bg-background"
+      >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading library data...</p>
-          <p className="mt-2 text-xs text-muted-foreground">Library Management System</p>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="rounded-full h-32 w-32 border-b-2 border-primary"
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-4 text-muted-foreground"
+          >
+            جاري تحميل بيانات المكتبة...
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-2 text-xs text-muted-foreground"
+          >
+            نظام إدارة المكتبة
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
     )
   }
   return (
@@ -53,21 +76,37 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-1 flex-col"
+        >
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <SectionCards libraryStats={libraryData} />
-              <div className="px-4 lg:px-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="px-4 lg:px-6"
+              >
                 <ChartAreaInteractive libraryStats={libraryData} />
-              </div>
-              <BooksDataTable data={libraryData.books} onRefresh={fetchData} />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <BooksDataTable data={libraryData.books} onRefresh={fetchData} />
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </SidebarInset>
+      <AppSidebar variant="inset" />
     </SidebarProvider>
   )
 }

@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Library Management System",
-  description: "A comprehensive library management system built with Next.js and .NET",
+  title: "نظام إدارة المكتبة",
+  description: "نظام شامل لإدارة المكتبة مبني باستخدام Next.js و .NET",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ar" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

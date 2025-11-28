@@ -27,24 +27,24 @@ export function NotificationCenter() {
   const [notifications, setNotifications] = React.useState<Notification[]>(() => [
     {
       id: "1",
-      title: "New Book Added",
-      message: "Book 'Clean Code' has been successfully added to the library",
+      title: "تم إضافة كتاب جديد",
+      message: "تم إضافة كتاب 'Clean Code' بنجاح إلى المكتبة",
       type: "success",
       timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
       read: false,
     },
     {
       id: "2",
-      title: "New Member Registered",
-      message: "New member registered: Ahmed Mohamed (Student)",
+      title: "تم تسجيل عضو جديد",
+      message: "تم تسجيل عضو جديد: أحمد محمد (طالب)",
       type: "info",
       timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
       read: false,
     },
     {
       id: "3",
-      title: "Book Borrowed",
-      message: "Book 'Design Patterns' has been borrowed by Fatima Ali",
+      title: "تم استعارة كتاب",
+      message: "تم استعارة كتاب 'Design Patterns' بواسطة فاطمة علي",
       type: "info",
       timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
       read: true,
@@ -112,7 +112,7 @@ export function NotificationCenter() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel className="flex items-center justify-between">
-          <span>Notifications</span>
+          <span>الإشعارات</span>
           {unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -120,7 +120,7 @@ export function NotificationCenter() {
               onClick={markAllAsRead}
               className="text-xs h-auto p-1"
             >
-              Mark all as read
+              تحديد الكل كمقروء
             </Button>
           )}
         </DropdownMenuLabel>
@@ -128,7 +128,7 @@ export function NotificationCenter() {
         
         {notifications.length === 0 ? (
           <div className="p-4 text-center text-muted-foreground">
-            No notifications
+            لا توجد إشعارات
           </div>
         ) : (
           <ScrollArea className="h-[300px]">

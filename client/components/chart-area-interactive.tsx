@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { motion } from "motion/react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -30,7 +31,7 @@ import {
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
 
-export const description = "Library usage analytics"
+export const description = "تحليلات استخدام المكتبة"
 
 interface LibraryStats {
   totalBooks: number;
@@ -45,120 +46,99 @@ interface LibraryStats {
 const generateLibraryData = (stats: LibraryStats) => {
   const data = []
   const today = new Date()
+  const totalBooks = stats.totalBooks || 10
+  const baseAvailable = Math.max(3, stats.availableBooks || 5)
+  const baseBorrowed = Math.max(0, stats.borrowedBooks || 2)
   
   for (let i = 29; i >= 0; i--) {
     const date = new Date(today)
     date.setDate(date.getDate() - i)
     
-    // Simulate some variation in borrowing patterns
-    const baseAvailable = stats.availableBooks
-    const baseBorrowed = stats.borrowedBooks
-    const variation = Math.random() * 0.3 - 0.15 // ±15% variation
+    // Create realistic variation with smooth trends
+    const dayOfWeek = date.getDay()
+    const weekProgress = (29 - i) / 29 // 0 to 1 over the period
+    
+    // Weekend effect: more borrowing on weekends
+    const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 1.2 : 1.0
+    
+    // Gradual trend: borrowing increases slightly over time
+    const trendFactor = 1 + (weekProgress * 0.3)
+    
+    // Random variation
+    const randomVariation = (Math.random() * 0.4 - 0.2) // ±20%
+    
+    // Calculate values with realistic patterns
+    const borrowed = Math.max(0, Math.min(
+      totalBooks - 1,
+      Math.round(baseBorrowed * trendFactor * weekendBoost * (1 + randomVariation))
+    ))
+    
+    const available = Math.max(1, totalBooks - borrowed)
     
     data.push({
       date: date.toISOString().split('T')[0],
-      available: Math.max(0, Math.round(baseAvailable + (baseAvailable * variation))),
-      borrowed: Math.max(0, Math.round(baseBorrowed + (baseBorrowed * variation * -1))),
+      available,
+      borrowed,
     })
   }
   
   return data
 }
 
-const chartData = [
-  { date: "2024-11-01", available: 15, borrowed: 8 },
-  { date: "2024-11-02", available: 14, borrowed: 9 },
-  { date: "2024-11-03", available: 16, borrowed: 7 },
-  { date: "2024-11-04", available: 13, borrowed: 10 },
-  { date: "2024-11-05", available: 12, borrowed: 11 },
-  { date: "2024-04-16", desktop: 138, mobile: 190 },
-  { date: "2024-04-17", desktop: 446, mobile: 360 },
-  { date: "2024-04-18", desktop: 364, mobile: 410 },
-  { date: "2024-04-19", desktop: 243, mobile: 180 },
-  { date: "2024-04-20", desktop: 89, mobile: 150 },
-  { date: "2024-04-21", desktop: 137, mobile: 200 },
-  { date: "2024-04-22", desktop: 224, mobile: 170 },
-  { date: "2024-04-23", desktop: 138, mobile: 230 },
-  { date: "2024-04-24", desktop: 387, mobile: 290 },
-  { date: "2024-04-25", desktop: 215, mobile: 250 },
-  { date: "2024-04-26", desktop: 75, mobile: 130 },
-  { date: "2024-04-27", desktop: 383, mobile: 420 },
-  { date: "2024-04-28", desktop: 122, mobile: 180 },
-  { date: "2024-04-29", desktop: 315, mobile: 240 },
-  { date: "2024-04-30", desktop: 454, mobile: 380 },
-  { date: "2024-05-01", desktop: 165, mobile: 220 },
-  { date: "2024-05-02", desktop: 293, mobile: 310 },
-  { date: "2024-05-03", desktop: 247, mobile: 190 },
-  { date: "2024-05-04", desktop: 385, mobile: 420 },
-  { date: "2024-05-05", desktop: 481, mobile: 390 },
-  { date: "2024-05-06", desktop: 498, mobile: 520 },
-  { date: "2024-05-07", desktop: 388, mobile: 300 },
-  { date: "2024-05-08", desktop: 149, mobile: 210 },
-  { date: "2024-05-09", desktop: 227, mobile: 180 },
-  { date: "2024-05-10", desktop: 293, mobile: 330 },
-  { date: "2024-05-11", desktop: 335, mobile: 270 },
-  { date: "2024-05-12", desktop: 197, mobile: 240 },
-  { date: "2024-05-13", desktop: 197, mobile: 160 },
-  { date: "2024-05-14", desktop: 448, mobile: 490 },
-  { date: "2024-05-15", desktop: 473, mobile: 380 },
-  { date: "2024-05-16", desktop: 338, mobile: 400 },
-  { date: "2024-05-17", desktop: 499, mobile: 420 },
-  { date: "2024-05-18", desktop: 315, mobile: 350 },
-  { date: "2024-05-19", desktop: 235, mobile: 180 },
-  { date: "2024-05-20", desktop: 177, mobile: 230 },
-  { date: "2024-05-21", desktop: 82, mobile: 140 },
-  { date: "2024-05-22", desktop: 81, mobile: 120 },
-  { date: "2024-05-23", desktop: 252, mobile: 290 },
-  { date: "2024-05-24", desktop: 294, mobile: 220 },
-  { date: "2024-05-25", desktop: 201, mobile: 250 },
-  { date: "2024-05-26", desktop: 213, mobile: 170 },
-  { date: "2024-05-27", desktop: 420, mobile: 460 },
-  { date: "2024-05-28", desktop: 233, mobile: 190 },
-  { date: "2024-05-29", desktop: 78, mobile: 130 },
-  { date: "2024-05-30", desktop: 340, mobile: 280 },
-  { date: "2024-05-31", desktop: 178, mobile: 230 },
-  { date: "2024-06-01", desktop: 178, mobile: 200 },
-  { date: "2024-06-02", desktop: 470, mobile: 410 },
-  { date: "2024-06-03", desktop: 103, mobile: 160 },
-  { date: "2024-06-04", desktop: 439, mobile: 380 },
-  { date: "2024-06-05", desktop: 88, mobile: 140 },
-  { date: "2024-06-06", desktop: 294, mobile: 250 },
-  { date: "2024-06-07", desktop: 323, mobile: 370 },
-  { date: "2024-06-08", desktop: 385, mobile: 320 },
-  { date: "2024-06-09", desktop: 438, mobile: 480 },
-  { date: "2024-06-10", desktop: 155, mobile: 200 },
-  { date: "2024-06-11", desktop: 92, mobile: 150 },
-  { date: "2024-06-12", desktop: 492, mobile: 420 },
-  { date: "2024-06-13", desktop: 81, mobile: 130 },
-  { date: "2024-06-14", desktop: 426, mobile: 380 },
-  { date: "2024-06-15", desktop: 307, mobile: 350 },
-  { date: "2024-06-16", desktop: 371, mobile: 310 },
-  { date: "2024-06-17", desktop: 475, mobile: 520 },
-  { date: "2024-06-18", desktop: 107, mobile: 170 },
-  { date: "2024-06-19", desktop: 341, mobile: 290 },
-  { date: "2024-06-20", desktop: 408, mobile: 450 },
-  { date: "2024-06-21", desktop: 169, mobile: 210 },
-  { date: "2024-06-22", desktop: 317, mobile: 270 },
-  { date: "2024-06-23", desktop: 480, mobile: 530 },
-  { date: "2024-06-24", desktop: 132, mobile: 180 },
-  { date: "2024-06-25", desktop: 141, mobile: 190 },
-  { date: "2024-06-26", desktop: 434, mobile: 380 },
-  { date: "2024-06-27", desktop: 448, mobile: 490 },
-  { date: "2024-06-28", desktop: 149, mobile: 200 },
-  { date: "2024-06-29", desktop: 103, mobile: 160 },
-  { date: "2024-06-30", desktop: 446, mobile: 400 },
-]
+// Generate fallback chart data with realistic library usage patterns
+const generateFallbackData = () => {
+  const data = []
+  const today = new Date()
+  const totalBooks = 10
+  const baseAvailable = 7
+  const baseBorrowed = 3
+  
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date(today)
+    date.setDate(date.getDate() - i)
+    
+    // Create realistic variation
+    const dayOfWeek = date.getDay()
+    const weekProgress = (29 - i) / 29
+    
+    // Weekend effect: more borrowing on weekends
+    const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 1.3 : 1.0
+    
+    // Gradual trend
+    const trendFactor = 1 + (weekProgress * 0.2)
+    
+    // Random variation
+    const randomVariation = (Math.random() * 0.4 - 0.2)
+    
+    const borrowed = Math.max(0, Math.min(
+      totalBooks - 1,
+      Math.round(baseBorrowed * trendFactor * weekendBoost * (1 + randomVariation))
+    ))
+    
+    const available = Math.max(1, totalBooks - borrowed)
+    
+    data.push({
+      date: date.toISOString().split('T')[0],
+      available,
+      borrowed,
+    })
+  }
+  
+  return data
+}
+
+const chartData = generateFallbackData()
 
 const chartConfig = {
   books: {
-    label: "Books",
+    label: "الكتب",
   },
   available: {
-    label: "Available",
+    label: "متاحة",
     color: "hsl(var(--chart-1))",
   },
   borrowed: {
-    label: "Borrowed",
+    label: "مستعارة",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig
@@ -183,27 +163,36 @@ export function ChartAreaInteractive({ libraryStats }: { libraryStats?: LibraryS
 
   const filteredData = actualChartData.filter((item) => {
     const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
     let daysToSubtract = 90
     if (timeRange === "30d") {
       daysToSubtract = 30
     } else if (timeRange === "7d") {
       daysToSubtract = 7
     }
-    const startDate = new Date(referenceDate)
+    
+    const startDate = new Date(today)
     startDate.setDate(startDate.getDate() - daysToSubtract)
-    return date >= startDate
+    
+    return date >= startDate && date <= today
   })
 
   return (
-    <Card className="@container/card">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card dir="rtl" className="@container/card">
       <CardHeader>
-        <CardTitle>Library Usage Analytics</CardTitle>
+        <CardTitle>تحليلات استخدام المكتبة</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Book availability and borrowing trends over time
+            اتجاهات إتاحة الكتب والاستعارة مع مرور الوقت
           </span>
-          <span className="@[540px]/card:hidden">Book trends</span>
+          <span className="@[540px]/card:hidden">اتجاهات الكتب</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -213,9 +202,9 @@ export function ChartAreaInteractive({ libraryStats }: { libraryStats?: LibraryS
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
           >
-            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
-            <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
-            <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
+            <ToggleGroupItem value="90d">آخر 3 أشهر</ToggleGroupItem>
+            <ToggleGroupItem value="30d">آخر 30 يوم</ToggleGroupItem>
+            <ToggleGroupItem value="7d">آخر 7 أيام</ToggleGroupItem>
           </ToggleGroup>
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
@@ -223,17 +212,17 @@ export function ChartAreaInteractive({ libraryStats }: { libraryStats?: LibraryS
               size="sm"
               aria-label="Select a value"
             >
-              <SelectValue placeholder="Last 3 months" />
+              <SelectValue placeholder="آخر 3 أشهر" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
               <SelectItem value="90d" className="rounded-lg">
-                Last 3 months
+                آخر 3 أشهر
               </SelectItem>
               <SelectItem value="30d" className="rounded-lg">
-                Last 30 days
+                آخر 30 يوم
               </SelectItem>
               <SelectItem value="7d" className="rounded-lg">
-                Last 7 days
+                آخر 7 أيام
               </SelectItem>
             </SelectContent>
           </Select>
@@ -318,5 +307,6 @@ export function ChartAreaInteractive({ libraryStats }: { libraryStats?: LibraryS
         </ChartContainer>
       </CardContent>
     </Card>
+    </motion.div>
   )
 }

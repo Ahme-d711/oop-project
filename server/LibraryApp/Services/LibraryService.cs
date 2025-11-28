@@ -106,5 +106,11 @@ public class LibraryService
     {
         return _library.GetBorrowedBooks(memberId);
     }
+
+    // Remove member with validation
+    public bool RemoveMember(string memberId)
+    {
+        return _library.RemoveMember(memberId);
+    }
 }
 

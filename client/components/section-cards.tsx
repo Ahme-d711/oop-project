@@ -1,3 +1,7 @@
+"use client"
+
+import * as React from "react"
+import { motion } from "motion/react"
 import { IconTrendingDown, IconTrendingUp, IconBook, IconUsers, IconBookmark, IconUserCheck } from "@tabler/icons-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -28,92 +32,127 @@ export function SectionCards({ libraryStats }: { libraryStats: LibraryStats }) {
     ? ((libraryStats.borrowedBooks / libraryStats.totalBooks) * 100).toFixed(1)
     : "0";
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.4, 0, 0.2, 1] as const,
+      },
+    },
+  }
+
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      <Card className="@container/card">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4"
+    >
+      <motion.div variants={cardVariants}>
+        <Card dir="rtl" className="@container/card">
         <CardHeader>
-          <CardDescription>Total Books</CardDescription>
+          <CardDescription>إجمالي الكتب</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {libraryStats.totalBooks}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconBook />
-              Library Collection
+              مجموعة المكتبة
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Available: {libraryStats.availableBooks} <IconBook className="size-4" />
+            متاحة: {libraryStats.availableBooks} <IconBook className="size-4" />
           </div>
           <div className="text-muted-foreground">
-            {availabilityRate}% availability rate
+            {availabilityRate}% معدل الإتاحة
           </div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      </motion.div>
+      <motion.div variants={cardVariants}>
+        <Card dir="rtl" className="@container/card">
         <CardHeader>
-          <CardDescription>Borrowed Books</CardDescription>
+          <CardDescription>الكتب المستعارة</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {libraryStats.borrowedBooks}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconBookmark />
-              Currently Out
+              مستعارة حالياً
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            {borrowRate}% of collection <IconBookmark className="size-4" />
+            {borrowRate}% من المجموعة <IconBookmark className="size-4" />
           </div>
           <div className="text-muted-foreground">
-            Books currently borrowed
+            الكتب المستعارة حالياً
           </div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      </motion.div>
+      <motion.div variants={cardVariants}>
+        <Card dir="rtl" className="@container/card">
         <CardHeader>
-          <CardDescription>Total Members</CardDescription>
+          <CardDescription>إجمالي الأعضاء</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {libraryStats.totalMembers}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconUsers />
-              Active Members
+              الأعضاء النشطون
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Students: {libraryStats.studentMembers} <IconUsers className="size-4" />
+            الطلاب: {libraryStats.studentMembers} <IconUsers className="size-4" />
           </div>
-          <div className="text-muted-foreground">Teachers: {libraryStats.teacherMembers}</div>
+          <div className="text-muted-foreground">المدرسون: {libraryStats.teacherMembers}</div>
         </CardFooter>
       </Card>
-      <Card className="@container/card">
+      </motion.div>
+      <motion.div variants={cardVariants}>
+        <Card dir="rtl" className="@container/card">
         <CardHeader>
-          <CardDescription>Library Usage</CardDescription>
+          <CardDescription>استخدام المكتبة</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             {borrowRate}%
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconUserCheck />
-              Utilization
+              الاستخدام
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Books in circulation <IconUserCheck className="size-4" />
+            الكتب قيد التداول <IconUserCheck className="size-4" />
           </div>
-          <div className="text-muted-foreground">Collection utilization rate</div>
+          <div className="text-muted-foreground">معدل استخدام المجموعة</div>
         </CardFooter>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

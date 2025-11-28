@@ -98,5 +98,29 @@ public class MembersController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Delete a member by ID
+    /// </summary>
+    [HttpDelete("{id}")]
+    public ActionResult DeleteMember(string id)
+    {
+        try
+        {
+            bool deleted = _libraryService.RemoveMember(id);
+            if (!deleted)
+                return NotFound(new { message = "Member not found" });
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = ex.Message });
+        }
+    }
 }
 
